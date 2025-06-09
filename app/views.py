@@ -1,13 +1,54 @@
 from collections import defaultdict
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Product, ProductMaterial, Warehouse
-from .serializers import MaterialRequestSerializer
+from .models import Product, ProductMaterial, Warehouse, Material
+from .serializers import MaterialRequestSerializer, ProductSerializer, ProductMaterialSerializer, WarehouseSerializer, \
+    MaterialSerializer
 
+
+class ProductListCreateView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+class MaterialListCreateView(generics.ListCreateAPIView):
+    queryset = Material.objects.all()
+    serializer_class = MaterialSerializer
+
+
+class ProductMaterialListCreateView(generics.ListCreateAPIView):
+    queryset = ProductMaterial.objects.all()
+    serializer_class = ProductMaterialSerializer
+
+
+class WarehouseListCreateView(generics.ListCreateAPIView):
+    queryset = Warehouse.objects.all()
+    serializer_class = WarehouseSerializer
 
 class WareHouserMaterialCheckView(APIView):
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(  # Bu yerda Items emas, Schema bo'lishi kerak!
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'product_code': openapi.Schema(type=openapi.TYPE_INTEGER, example=1001),
+                    'quantity': openapi.Schema(type=openapi.TYPE_INTEGER, example=3),
+                },
+                required=['product_code', 'quantity']
+            ),
+            example=[
+                {"product_code": 1001, "quantity": 3},
+                {"product_code": 1002, "quantity": 5}
+            ]
+        )
+    )
     def post(self, request):
         serializer = MaterialRequestSerializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
