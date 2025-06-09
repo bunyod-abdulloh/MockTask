@@ -10,3 +10,6 @@ urlpatterns = [
     path('warehouses/', WarehouseListCreateView.as_view()),
     path('warehouse-check/', WareHouserMaterialCheckView.as_view()),
 ]
+
+SECRET_KEY=django-insecure-%g!bfarey*k9+wc4cd*34lt8lr3pmvjy-#-=fy_vi1uu*smtw(
+DEBUG=True
